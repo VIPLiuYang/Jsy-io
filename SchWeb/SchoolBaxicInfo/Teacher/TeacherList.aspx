@@ -142,6 +142,8 @@
                                                 <tr>
                                                     <td>教师姓名:</td>
                                                     <td><input type="text" v-model="UserTname" style="width:150px;height:30px" /></td>
+                                                    <input v-model="type"  style="display:none" />
+                                                   <input v-model="UserId"  style="display:none" />
                                                     <td>所在部门:</td>
                                                     <td> 
                                                         <div id="PriDep">
@@ -155,18 +157,19 @@
                                                     <td>手机号:</td>
                                                     <td><input type="text" v-model="Mobile" style="width:150px;height:30px" /></td>
                                                     <td>作为班主任的班级:</td>
-                                                    <td><select class="form-control" style="width:150px;height:30px" v-model="ClassMs">
-                                                    <option value="0">济南大学</option>
-                                                    <option value="1">山东大学</option>
-                                                    <option value="2">烟台大学</option> 
-                                                </select></td>
+                                                    <td>
+                                                        <select class="form-control" id="select1" style="width:150px;height:30px"> 
+                                                               <option id="selectDropdown1" :value='item1.GradeId' v-for="item1 in Grade">{{item1.GradeName}}</option> 
+                                                        </select>
+
+                                                    </td>
                                                 </tr>
                                             </table>
                                              
                                         </div>    
                                         <div class="modal-footer">               
                                             <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭</button>            
-                                            <button type="button" id="btn_submit" v-on:click="save" class="btn btn-primary" data-dismiss="modal"><span class="icon-hdd" aria-hidden="true"></span>保存</button>
+                                            <button type="button" id="btn_submit" v-on:click="save(type)" class="btn btn-primary" data-dismiss="modal"><span class="icon-hdd" aria-hidden="true"></span>保存</button>
                                         </div>          
                                     </div>     
                                 </div>
@@ -192,6 +195,8 @@
     <script src="../../assets/js/bootbox.min.js"></script>
     <script src="../../assets/js/ace.min.js"></script> 
     <script type="text/javascript">
+        var PriDepList;
+        var PriGradeList;
         //初始化页面查询
         window.onload = function () {
             $.ajax({
@@ -201,6 +206,25 @@
                 data: "",
                 success: function (data) {
                     dt.arraylist = data;
+                }
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "ashx/Teacher.ashx?action=Getdep",
+                dataType: "json",
+                data: "",
+                success: function (data) {
+                    PriDepList = data;
+                }
+            });
+            $.ajax({
+                type: "POST",
+                url: "ashx/Teacher.ashx?action=Getgrade",
+                dataType: "json",
+                data: "",
+                success: function (data) {
+                    PriGradeList = data;
                 }
             });
         }
@@ -214,10 +238,12 @@
                     $("#PriModalLabel").text("编辑部门信息");
                     $('#myModal').modal();
                     list.UserTname = item.UserTname;
-                    $("#PriDep option:selected").text(item.Departname);
-                    $("#PriDep option:selected").val(item.DepartIds);
+                    //$("#PriDep option:selected").text(item.Departname);
+                    //$("#PriDep option:selected").val(item.DepartIds);
                     list.Mobile = item.Mobile;
-                    list.ClassMs = item.ClassMs
+                    list.Depar = PriDepList;
+                    list.ClassMs = item.ClassMs;
+                    list.UserId = item.UserId;
                 },
                 //删除一行数据方法
                 del: function (item) {
@@ -249,29 +275,51 @@
         var list = new Vue({
             el: '#myModal',
             data: {
+                type: '',
+                UserId:'',
                 UserTname: '',
                 DepartIds: '',
                 Mobile: '',
                 ClassMs: '',
-                Depar: []
+                Depar: [],
+                Grade:[]
             }, methods: {
                 //添加保存方法
-                save: function () {
-                    var PriDep = $("#PriDep option:selected").val();
-                    $.ajax({
-                        type: "POST",
-                        url: "ashx/Teacher.ashx?action=Add",
-                        dataType: "json",
-                        data: { "UserTname": list.UserTname, "DepartIds": PriDep, "Mobile": list.Mobile, "ClassMs": list.ClassMs },
-                        success: function (data) {
-                        }
-                    });
-                    Pridialog("添加成功！");
-                    window.onload();
-                    list.UserTname = "";
-                    list.DepartIds = "";
-                    list.Mobile = "";
-                    list.ClassMs = "";
+                save: function (type) {
+                    if (type=="A") {
+                        var PriDep = $("#PriDep option:selected").val();
+                        $.ajax({
+                            type: "POST",
+                            url: "ashx/Teacher.ashx?action=Add",
+                            dataType: "json",
+                            data: { "UserTname": list.UserTname, "DepartIds": PriDep, "Mobile": list.Mobile, "ClassMs": list.ClassMs  },
+                            success: function (data) {
+                            }
+                        });
+                        Pridialog("添加成功！");
+                        window.onload();
+                        list.UserTname = "";
+                        list.DepartIds = "";
+                        list.Mobile = "";
+                        list.ClassMs = "";
+                    } else {
+                        var PriDep = $("#PriDep option:selected").val();
+                        $.ajax({
+                            type: "POST",
+                            url: "ashx/Teacher.ashx?action=Edit",
+                            dataType: "json",
+                            data: { "UserTname": list.UserTname, "DepartIds": PriDep, "Mobile": list.Mobile, "ClassMs": list.ClassMs, "UserId": list.UserId },
+                            success: function (data) {
+                            }
+                        });
+                        Pridialog("修改成功！");
+                        window.onload();
+                        list.UserTname = "";
+                        list.DepartIds = "";
+                        list.Mobile = "";
+                        list.ClassMs = "";
+                    }
+                   
                 }
             }
         })
@@ -297,17 +345,10 @@
                 },
                 //添加弹出框-获取部门信息
                 add: function () {
-                    $.ajax({
-                        type: "POST",
-                        url: "ashx/Teacher.ashx?action=Getdep",
-                        dataType: "json",
-                        data: "",
-                        success: function (data) {
-                            list.Depar = data;
-                        }
-                    });
+                    list.Depar = PriDepList;
+                    list.Grade = PriGradeList;
                     $("#PriModalLabel").text("添加部门信息");
-                    $('#myModal').modal();
+                    $('#myModal').modal(); 
                 }
             }
         })

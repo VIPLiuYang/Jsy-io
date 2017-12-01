@@ -145,21 +145,21 @@
                                     <div class="modal-content"> 
                                         <div class="modal-header">         
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>           
-                                            <h4 class="modal-title" id="PriModalLabel">新增</h4>
+                                            <h4 class="modal-title" id="PriModalLabel"></h4>
                                         </div>
                                         <div class="modal-body">
                                             <div class="form-group">       
                                                 <label for="txt_departmentname">部门名称</label>         
                                                 <input type="text" name="txt_departmentname" v-model="DepartName"  class="form-control" id="txt_departmentname" placeholder="部门名称">    
                                             </div>      
+                                            
                                             <div class="form-group">             
                                                 <label for="txt_parentdepartment">上级部门</label>             
-                                               <select class="form-control"  v-model="Pid"  >
-                                                   <option>请选择一个部门</option>
-																<option value="0">开发部</option>
-																<option value="1">财务部</option>
-                                                                <option value="2">采购部</option>
-                                               <</select>      
+                                                 <input v-model="type"  style="display:none" />
+                                                 <input v-model="DepartId"  style="display:none" />
+                                                <select class="form-control" id="select" v-model="Pid"> 
+                                                               <option id="selectDropdown" :value='item.DepartId' v-for="item in Depar">{{item.DepartName}}</option> 
+                                                            </select>  
                                             </div>    
                                             <div class="form-group">        
                                                 <label for="txt_departmentlevel">学校</label>
@@ -167,12 +167,12 @@
 																<option value="0">济南大学</option>
 																<option value="1">山东大学</option>
                                                                 <option value="2">烟台大学</option>
-                                               <</select>
+                                               </select>
                                             </div>       
                                         </div>    
                                         <div class="modal-footer">               
                                             <button type="button" class="btn btn-default" data-dismiss="modal"><img src="../../assets/images/删除筛选项.png" width="15px" height="15px" />关闭</button>            
-                                            <button type="button" id="btn_submit" v-on:click="save" class="btn btn-primary" data-dismiss="modal"><img src="../../assets/images/保存.png" width="15px" height="15px" /></span>保存</button>
+                                            <button type="button" id="btn_submit" v-on:click="save(type)"  class="btn btn-primary" data-dismiss="modal"><img src="../../assets/images/保存.png" width="15px" height="15px" /></span>保存</button>
                                         </div>          
                                     </div>     
                                 </div>
@@ -210,6 +210,7 @@
     <script src="../../assets/js/ace.min.js"></script> 
     <%--<script src="../../assets/js/DelDialog.js" type="text/javascript"></script>--%>
     <script type="text/javascript">
+        var PriDepList;
         window.onload = function () {
 
             $.ajax({
@@ -225,9 +226,19 @@
                         showCount: showCount,
                         limit: limit,
                         callback: function (curr, limit, totalCount) {
-                            
+
                         }
                     });
+                }
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "ashx/Depart.ashx?action=Getdep",
+                dataType: "json",
+                data: "",
+                success: function (data) {
+                    PriDepList = data;
                 }
             });
         }
@@ -237,13 +248,16 @@
             methods: {
                 //编辑弹出并绑定数据方法
                 edit: function (item) {
+                    list.type = "E";
                     $("#PriModalLabel").text("编辑部门信息");
                     $('#myModal').modal();
                     list.DepartName = item.DepartName;
                     //$("#PriDep option:selected").text(item.Departname);
                     //$("#PriDep option:selected").val(item.DepartIds);
-                    list.Pid = item.Pid;
+                  //  list.Pid = item.Pid;
                     list.SchId = item.SchId;
+                    list.Depar = PriDepList;
+                    list.DepartId = item.DepartId;
                 },
                 //删除一行数据方法
                 del: function (item) {
@@ -266,32 +280,59 @@
                         return false;
                     }
 
-                  
+
                 }
             }
         })
         var list = new Vue({
             el: '#myModal',
             data: {
+                type: '',
+                DepartId:'',
                 DepartName: '',
                 Pid: '',
-                SchId:''
+                SchId: '',
+                Depar: []
             }, methods: {
-                save: function () { 
-                    $.ajax({
-                        type: "POST",
-                        url: "ashx/Depart.ashx?action=Add",
-                        dataType: "json",
-                        data: { "DepartName": list.DepartName, "Pid": list.Pid, "SchId": list.SchId },
-                        success: function (data) {
-                            
-                        }
-                    });
-                    Pridialog("添加成功！");
-                    window.onload();
-                    list.DepartName = "";
-                    list.SchId = "";
-                    list.Pid = "";
+                save: function (type) {
+                    if (type == 'A') {
+                        if (list.DepartName == "")
+                            return
+                        else if (list.Pid == "")
+                            return
+                        else if (list.SchId == "")
+                            return 
+                        $.ajax({
+                            type: "POST",
+                            url: "ashx/Depart.ashx?action=Add",
+                            dataType: "json",
+                            data: { "DepartName": list.DepartName, "Pid": list.Pid, "SchId": list.SchId },
+                            success: function (data) {  }
+                        });
+                        Pridialog("添加成功！");
+                        window.onload();
+                        list.DepartName = "";
+                        list.SchId = "";
+                        list.Pid = ""; 
+                    } else {
+                        if (list.DepartName == "")
+                            return
+                        else if (list.Pid == "")
+                            return
+                        else if (list.SchId == "")
+                            return
+                        $.ajax({
+                            type: "POST",
+                            url: "ashx/Depart.ashx?action=Edit",
+                            dataType: "json",
+                            data: { "DepartName": list.DepartName, "Pid": list.Pid, "SchId": list.SchId,"DepartId":list.DepartId },
+                            success: function (data) { }
+                        });
+                        Pridialog("修改成功！"); 
+                        list.DepartName = "";
+                        list.SchId = "";
+                        list.Pid = "";
+                    }
                 }
             }
         })
@@ -301,7 +342,7 @@
                 arraylist: []
             },
             methods: {
-                sel: function () { 
+                sel: function () {
                     var Depname = $("#Depname").val();
                     $.ajax({
                         type: "POST",
@@ -314,12 +355,15 @@
                     });
                 },
                 add: function () {
+                    list.type = "A";
                     $("#PriModalLabel").text("添加部门信息");
                     $('#myModal').modal();
+                    list.Depar = PriDepList;
                 },
                 edit: function () {
                     $("#PriModalLabel").text("编辑部门信息");
                     $('#myModal').modal();
+                    alert(list.type);
                 },
                 del: function () {
 

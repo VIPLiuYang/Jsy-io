@@ -6,6 +6,7 @@ using SchSystem.Bll;
 using System.Data;
 using System.Data.SqlClient;
 using SchSystem.Model;
+using SchManagerInfoSystem.Common;
 
 
 namespace SchWeb.SchoolBaxicInfo.Department.ashx
@@ -16,12 +17,45 @@ namespace SchWeb.SchoolBaxicInfo.Department.ashx
     public class Depart : IHttpHandler
     {
         SchSystem.Bll.SchDepartInfoBll bll_depart = new SchSystem.Bll.SchDepartInfoBll();
+        SchManagerInfoSystem.Common.DttoJson dttojson = new SchManagerInfoSystem.Common.DttoJson();
         public void ProcessRequest(HttpContext context)
         {
             context.Response.ContentType = "text/plain";
             string action = context.Request["action"];
+            #region 获取班级
+            if (action == "Getgrade")
+            {
+                try
+                {
+                    string sql = " select gradeid,gradename from  dbo.SchGradeInfo  ";
+                    DataTable dt = DbHelperSQL.Query(sql).Tables[0];
+                    context.Response.Write(dttojson.DataTableToJson(dt));
+                }
+                catch (Exception)
+                {
 
-            if (action == "Search")
+                    throw;
+                }
+            }
+            #endregion
+            #region 获取部门
+            else if (action == "Getdep")
+            {
+                try
+                {
+                    string sql = " select DepartId,DepartName  FROM SchDepartInfo  ";
+                    DataTable dt = DbHelperSQL.Query(sql).Tables[0];
+                    context.Response.Write(dttojson.DataTableToJson(dt));
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+            #endregion
+            #region 查询
+            else if (action == "Search")
             {
                 string strWhere = "";
                 string Depname = Convert.ToString(context.Request["Depname"]);
@@ -45,6 +79,8 @@ namespace SchWeb.SchoolBaxicInfo.Department.ashx
                 string json = dttojson.DataTableToJson(dt);
                 context.Response.Write(json);
             }
+            #endregion
+            #region 添加
             else if (action == "Add")
             {
                 SchDepartInfo Sch = new SchDepartInfo();
@@ -63,11 +99,30 @@ namespace SchWeb.SchoolBaxicInfo.Department.ashx
                     context.Response.Write(0);
                 }
             }
-            else if (action == "edit")
+            #endregion
+            #region 编辑
+            else if (action == "Edit")
             {
-
+                SchDepartInfo Sch = new SchDepartInfo();
+                Sch.DepartId=Convert.ToInt32( context.Request["DepartId"]);
+                Sch.DepartName = context.Request["DepartName"];
+                Sch.OrderId = 1;
+                Sch.Stat = 1;
+                Sch.RecTime = Convert.ToDateTime("2010-09-12");
+                Sch.RecUser = " sw";
+                Sch.Pid = Convert.ToInt32(context.Request["Pid"]);
+                Sch.LastRecTime = Convert.ToDateTime("2011-02-11");
+                Sch.LastRecUser = "liuyang";
+                Sch.SchId = Convert.ToInt32(context.Request["SchId"]);
+                bool Prirow = bll_depart.Update(Sch);
+                if (Prirow == true)
+                {
+                    context.Response.Write(0);
+                }
             }
-            else if (action =="Delete")
+            #endregion 
+            #region 删除
+            else if (action == "Delete")
             {
                 int DepartId = Convert.ToInt32(context.Request["DepartId"]);
                 bool Prirow = bll_depart.Delete(DepartId);
@@ -77,8 +132,8 @@ namespace SchWeb.SchoolBaxicInfo.Department.ashx
                 }
                 context.Response.Write("Success");
             }
-        }
-
+            #endregion
+        } 
         public bool IsReusable
         {
             get
