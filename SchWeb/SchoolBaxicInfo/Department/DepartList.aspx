@@ -1,5 +1,5 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="DepartList.aspx.cs" Inherits="SchWeb.SchoolBaxicInfo.Department.DepartList" %>
-888
+888   
 <!DOCTYPE html>
 <html lang="en">
 
