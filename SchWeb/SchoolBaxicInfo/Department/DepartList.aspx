@@ -38,9 +38,9 @@
                     <!-- .breadcrumb -->
 
                 </div>
-                <br /> 
+                <br />   
                 <div class="page-content">
-                     
+                       
                     <div class="row">
                         <div class="col-xs-12" id="demo"> 
                            <%-- <button class="btn btn-info" v-on:click="sel">
