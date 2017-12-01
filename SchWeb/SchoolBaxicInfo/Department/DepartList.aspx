@@ -18,8 +18,8 @@
 <script src="http://www.jq22.com/jquery/bootstrap-3.3.4.js"></script>
 <script src="../../assets/js/Pager/extendPagination.js"></script>
 </head>
-
-<body>
+     
+<body> 
     <div class="main-container" id="main-container">
         <div class="main-container-inner">
             <div class="main-content" style="margin-left: 0px">
