@@ -221,19 +221,27 @@
                 },
                 //删除一行数据方法
                 del: function (item) {
-                    $.ajax({
-                        type: "POST",
-                        url: "ashx/Teacher.ashx?action=Delete",
-                        dataType: "json",
-                        data: { "UserId": item.UserId },
-                        success: function (data) {
-                            alert(data);
+                    var msg = "您真的确定要删除吗？\n\n请确认！";
+                    if (confirm(msg) == true) {
+                        $.ajax({
+                            type: "POST",
+                            url: "ashx/Teacher.ashx?action=Delete",
+                            dataType: "json",
+                            data: { "UserId": item.UserId },
+                            success: function (data) {
+                                alert(data);
+                            }
+                        });
+                        for (var i = dt.arraylist.length - 1; i >= 0; i--) {
+                            if (dt.arraylist[i].UserId == item.UserId)
+                                dt.arraylist.splice(i, 1);
                         }
-                    });
-                    for (var i = dt.arraylist.length - 1; i >= 0; i--) {
-                        if (dt.arraylist[i].UserId == item.UserId)
-                            dt.arraylist.splice(i, 1);
+                    } else {
+                        return false;
                     }
+
+                   
+                   
                 }
             }
         })

@@ -1,8 +1,6 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="DepartList.aspx.cs" Inherits="SchWeb.SchoolBaxicInfo.Department.DepartList" %>
-  
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="DepartList.aspx.cs" Inherits="SchWeb.SchoolBaxicInfo.Department.DepartList" %> 
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en"> 
 <head>
     <meta charset="utf-8" />
     <title>部门信息</title>
@@ -17,8 +15,7 @@
     <script src="http://www.jq22.com/jquery/jquery-1.10.2.js"></script>
 <script src="http://www.jq22.com/jquery/bootstrap-3.3.4.js"></script>
 <script src="../../assets/js/Pager/extendPagination.js"></script>
-</head>
-     
+</head> 
 <body> 
     <div class="main-container" id="main-container">
         <div class="main-container-inner">
@@ -28,15 +25,11 @@
                         <li>
                             <i class="icon-home home-icon"></i>
                             <a href="#">首页</a>
-                        </li>
-
+                        </li> 
                         <li>
                             <a href="#">部门信息</a>
-                        </li>
-
-                    </ul>
-                    <!-- .breadcrumb -->
-
+                        </li> 
+                    </ul> 
                 </div>
                 <br />   
                 <div class="page-content">
@@ -215,7 +208,7 @@
     <script src="../../assets/js/ace-elements.min.js"></script>
     <script src="../../assets/js/bootbox.min.js"></script>
     <script src="../../assets/js/ace.min.js"></script> 
-    <script src="../../assets/js/DelDialog.js" type="text/javascript"></script>
+    <%--<script src="../../assets/js/DelDialog.js" type="text/javascript"></script>--%>
     <script type="text/javascript">
         window.onload = function () {
 
@@ -254,23 +247,26 @@
                 },
                 //删除一行数据方法
                 del: function (item) {
-                    confirm($.ajax, {
-                        type: "POST", url: "ashx/Depart.ashx?action=Delete", dataType: "json", data: { "DepartId": item.DepartId },
-                        success: function (data) { alert(data); }
+                    var msg = "您真的确定要删除吗？\n\n请确认！";
+                    if (confirm(msg) == true) {
+                        $.ajax({
+                            type: "POST",
+                            url: "ashx/Depart.ashx?action=Delete",
+                            dataType: "json",
+                            data: { "DepartId": item.DepartId }, success: function (data) {
+                                alert(data);
+                            }
+                        });
+
+                        for (var i = dt.arraylist.length - 1; i >= 0; i--) {
+                            if (dt.arraylist[i].DepartId == item.DepartId)
+                                dt.arraylist.splice(i, 1);
+                        }
+                    } else {
+                        return false;
                     }
-                        )
-                    //$.ajax({
-                    //    type: "POST",
-                    //    url: "ashx/Depart.ashx?action=Delete",
-                    //    dataType: "json",
-                    //    data: { "DepartId": item.DepartId },success: function (data) {
-                    //        alert(data);
-                    //    }
-                    //});
-                    for (var i = dt.arraylist.length - 1; i >= 0; i--) {
-                        if (dt.arraylist[i].DepartId == item.DepartId)
-                            dt.arraylist.splice(i, 1);
-                    }
+
+                  
                 }
             }
         })
