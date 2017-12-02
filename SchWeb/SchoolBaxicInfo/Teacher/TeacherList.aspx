@@ -158,10 +158,11 @@
                                                     <td><input type="text" v-model="Mobile" style="width:150px;height:30px" /></td>
                                                     <td>作为班主任的班级:</td>
                                                     <td>
+                                                        <div id="PriGrad">
                                                         <select class="form-control" id="select1" style="width:150px;height:30px"> 
-                                                               <option id="selectDropdown1" :value='item1.GradeId' v-for="item1 in Grade">{{item1.GradeName}}</option> 
-                                                        </select>
-
+                                                               <option id="selectDropdown1" :value='item1.gradeid' v-for="item1 in Grade">{{item1.gradename}}</option> 
+                                                        </select> 
+                                                            </div>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -234,7 +235,8 @@
             template: '#table',
             methods: {
                 //编辑弹出并绑定数据方法
-                edit: function (item) { 
+                edit: function (item) {
+                    list.type = "E";
                     $("#PriModalLabel").text("编辑部门信息");
                     $('#myModal').modal();
                     list.UserTname = item.UserTname;
@@ -282,17 +284,18 @@
                 Mobile: '',
                 ClassMs: '',
                 Depar: [],
-                Grade:[]
+                Grade: [{ GradeId: "1001", GradeName:"一年级"}]
             }, methods: {
                 //添加保存方法
-                save: function (type) {
+                save: function (type) { 
                     if (type=="A") {
                         var PriDep = $("#PriDep option:selected").val();
+                        var PriGrad = $("#PriGrad option:selected").text(); 
                         $.ajax({
                             type: "POST",
                             url: "ashx/Teacher.ashx?action=Add",
                             dataType: "json",
-                            data: { "UserTname": list.UserTname, "DepartIds": PriDep, "Mobile": list.Mobile, "ClassMs": list.ClassMs  },
+                            data: { "UserTname": list.UserTname, "DepartIds": PriDep, "Mobile": list.Mobile, "ClassMs": PriGrad },
                             success: function (data) {
                             }
                         });
@@ -343,11 +346,12 @@
                         }
                     });
                 },
-                //添加弹出框-获取部门信息
+                //添加弹出框-获取教师信息
                 add: function () {
+                    list.type = "A";
                     list.Depar = PriDepList;
                     list.Grade = PriGradeList;
-                    $("#PriModalLabel").text("添加部门信息");
+                    $("#PriModalLabel").text("添加教师");
                     $('#myModal').modal(); 
                 }
             }

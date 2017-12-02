@@ -22,12 +22,12 @@ namespace SchWeb.SchoolBaxicInfo.Department.ashx
         {
             context.Response.ContentType = "text/plain";
             string action = context.Request["action"];
-            #region 获取班级
-            if (action == "Getgrade")
+            #region 获取学校
+            if (action == "GetSch")
             {
                 try
                 {
-                    string sql = " select gradeid,gradename from  dbo.SchGradeInfo  ";
+                    string sql = " select SchId,SchName from  SchInfo	   ";
                     DataTable dt = DbHelperSQL.Query(sql).Tables[0];
                     context.Response.Write(dttojson.DataTableToJson(dt));
                 }
@@ -61,7 +61,7 @@ namespace SchWeb.SchoolBaxicInfo.Department.ashx
                 string Depname = Convert.ToString(context.Request["Depname"]);
                 if (!string.IsNullOrEmpty(Depname))
                 {
-                    strWhere += " DepartName LIKE '%" + Depname + "%'";
+                    strWhere += " a.DepartName LIKE '%" + Depname + "%'";
                 }
                 //string userid = Convert.ToString(context.Session["userid"]);
                 ////如果Session为空，停止运行

@@ -61,7 +61,7 @@ namespace SchWeb.SchoolBaxicInfo.Teacher.ashx
                 string UserTname = Convert.ToString(context.Request["UserTname"]);
                 if (!string.IsNullOrEmpty(UserTname))
                 {
-                    strWhere += " UserTname LIKE '%" + UserTname + "%'";
+                    strWhere += "a.UserTname LIKE '%" + UserTname + "%'";
                 }
                
                 ////如果Session为空，停止运行

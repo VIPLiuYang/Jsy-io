@@ -85,14 +85,14 @@
 															</label>
 															</th>
 															<th>部门名称</th>
-															<th>学校</th>
-															<th class="hidden-480">状态</th>
-															<th><i class="icon-time "></i> 记录时间
+															<th>学校名称</th> 
+															<th>上级部门
 															</th>
 															<th>
                                                                 <i class="icon-time "></i>
                                                                 最后编辑时间</th>
                                                             <th>最后编辑人</th>
+                                                            <th class="hidden-480">状态</th>
                                                             <th>操作</th>
 														</tr>
 													</thead>
@@ -105,14 +105,15 @@
 															</label>
 															</td>
 															<td>{{item.DepartName}}</td>
-															<td>{{item.SchId}}</td>
-															<td> 
-                                                                <span v-if="item.Stat==1">有效</span>
-							                                    <span v-else >无效</span>
-															</td>
-															<td>{{item.RecTime}}</td>
+															<td>{{item.SchName}}</td>
+															
+															<td>{{item.Pname}}</td>
 															<td>{{item.LastRecTime}}</td>
                                                             <td>{{item.LastRecUser}}</td>
+                                                            <td> 
+                                                                <span v-if="item.Stat==1" style="color:	#007500">有效</span>
+							                                    <span v-else style="color:#EA0000" >无效</span>
+															</td>
                                                             <td>
                                                         <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons"> 
                                                             <a class="green" v-on:click="edit(item)">
@@ -163,11 +164,10 @@
                                             </div>    
                                             <div class="form-group">        
                                                 <label for="txt_departmentlevel">学校</label>
-                                              <select class="form-control"   v-model="SchId" >
-																<option value="0">济南大学</option>
-																<option value="1">山东大学</option>
-                                                                <option value="2">烟台大学</option>
-                                               </select>
+                                               
+                                                <select class="form-control" id="select1" v-model="SchId"> 
+                                                               <option id="selectDropdown1" :value='item1.SchId' v-for="item1 in Sch">{{item1.SchName}}</option> 
+                                                            </select> 
                                             </div>       
                                         </div>    
                                         <div class="modal-footer">               
@@ -211,6 +211,7 @@
     <%--<script src="../../assets/js/DelDialog.js" type="text/javascript"></script>--%>
     <script type="text/javascript">
         var PriDepList;
+        var PriSch;
         window.onload = function () {
 
             $.ajax({
@@ -239,6 +240,15 @@
                 data: "",
                 success: function (data) {
                     PriDepList = data;
+                }
+            });
+            $.ajax({
+                type: "POST",
+                url: "ashx/Depart.ashx?action=GetSch",
+                dataType: "json",
+                data: "",
+                success: function (data) {
+                    PriSch = data;
                 }
             });
         }
@@ -292,7 +302,8 @@
                 DepartName: '',
                 Pid: '',
                 SchId: '',
-                Depar: []
+                Depar: [],
+                Sch:[]
             }, methods: {
                 save: function (type) {
                     if (type == 'A') {
@@ -314,7 +325,7 @@
                         list.DepartName = "";
                         list.SchId = "";
                         list.Pid = ""; 
-                    } else {
+                    } else { 
                         if (list.DepartName == "")
                             return
                         else if (list.Pid == "")
@@ -359,6 +370,7 @@
                     $("#PriModalLabel").text("添加部门信息");
                     $('#myModal').modal();
                     list.Depar = PriDepList;
+                    list.Sch = PriSch;
                 },
                 edit: function () {
                     $("#PriModalLabel").text("编辑部门信息");

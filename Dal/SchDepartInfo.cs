@@ -259,8 +259,8 @@ namespace SchSystem.Dal
 		public DataSet GetList(string strWhere)
 		{
 			StringBuilder strSql=new StringBuilder();
-			strSql.Append("select DepartId,DepartName,Pid,OrderId,SchId,Stat,RecTime,RecUser,LastRecTime,LastRecUser ");
-			strSql.Append(" FROM SchDepartInfo ");
+			strSql.Append("select a.DepartId,a.DepartName,a.Pid,c.DepartName as Pname,a.OrderId,a.SchId,b.SchName,a.Stat,a.RecTime,a.RecUser,a.LastRecTime,a.LastRecUser ");
+			strSql.Append(" FROM SchDepartInfo as a	 left join SchInfo as b on a.SchId=b.SchId	left join SchDepartInfo as c on c.Pid=a.DepartId	  ");
 			if(strWhere.Trim()!="")
 			{
 				strSql.Append(" where "+strWhere);

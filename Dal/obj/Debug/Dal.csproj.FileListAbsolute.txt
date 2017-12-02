@@ -25,3 +25,12 @@ C:\Users\Administrator\Desktop\SchManagerInfoSystem\Dal\bin\Debug\Model.pdb
 C:\Users\Administrator\Desktop\SchManagerInfoSystem\Dal\obj\Debug\Dal.csprojResolveAssemblyReference.cache
 C:\Users\Administrator\Desktop\SchManagerInfoSystem\Dal\obj\Debug\Dal.dll
 C:\Users\Administrator\Desktop\SchManagerInfoSystem\Dal\obj\Debug\Dal.pdb
+D:\我的资料库\Documents\GitHub\Jsy-io\Dal\bin\Debug\Dal.dll
+D:\我的资料库\Documents\GitHub\Jsy-io\Dal\bin\Debug\Dal.pdb
+D:\我的资料库\Documents\GitHub\Jsy-io\Dal\bin\Debug\Common.dll
+D:\我的资料库\Documents\GitHub\Jsy-io\Dal\bin\Debug\Model.dll
+D:\我的资料库\Documents\GitHub\Jsy-io\Dal\bin\Debug\Common.pdb
+D:\我的资料库\Documents\GitHub\Jsy-io\Dal\bin\Debug\Model.pdb
+D:\我的资料库\Documents\GitHub\Jsy-io\Dal\obj\Debug\Dal.csprojResolveAssemblyReference.cache
+D:\我的资料库\Documents\GitHub\Jsy-io\Dal\obj\Debug\Dal.dll
+D:\我的资料库\Documents\GitHub\Jsy-io\Dal\obj\Debug\Dal.pdb
